@@ -1,0 +1,100 @@
+import React, { useEffect, useState } from "react";
+import Slider from "react-slick";
+import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
+import { collection, query, where, getDocs } from "firebase/firestore";
+import { db } from "../config/firebase";
+
+function CardsSlider() {
+  const [cards, setCards] = useState([]);
+
+  // Firebase se data fetch
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const q = query(
+          collection(db, "products"),
+          where("category", "==", "vehicle") 
+        );
+        const snapshot = await getDocs(q);
+
+        let dataArr = [];
+        snapshot.forEach((doc) => {
+          dataArr.push({ id: doc.id, ...doc.data() });
+        });
+
+        setCards(dataArr);
+      } catch (err) {
+        console.error("Error fetching products: ", err);
+      }
+    }
+
+    fetchData();
+  }, []);
+
+  // Custom arrows
+  const NextArrow = ({ onClick }) => (
+    <div
+      className="absolute right-0 top-1/2 transform -translate-y-1/2 bg-white border rounded-full p-2 shadow cursor-pointer z-10"
+      onClick={onClick}
+    >
+      <FaArrowRight />
+    </div>
+  );
+
+  const PrevArrow = ({ onClick }) => (
+    <div
+      className="absolute left-0 top-1/2 transform -translate-y-1/2 bg-white border rounded-full p-2 shadow cursor-pointer z-10"
+      onClick={onClick}
+    >
+      <FaArrowLeft />
+    </div>
+  );
+
+  const settings = {
+    dots: false,
+    infinite: false,
+    speed: 500,
+    slidesToShow: 4,
+    slidesToScroll: 2,
+    arrows: true,
+    nextArrow: <NextArrow />,
+    prevArrow: <PrevArrow />,
+    responsive: [
+      { breakpoint: 1024, settings: { slidesToShow: 3, slidesToScroll: 1 } },
+      { breakpoint: 640, settings: { slidesToShow: 1, slidesToScroll: 1 } },
+    ],
+  };
+
+  return (
+    <div className="max-w-6xl mx-auto my-8 relative">
+      <h2 className="text-xl font-bold mb-4">Vehicles</h2>
+      {cards.length > 0 ? (
+        <Slider {...settings}>
+          {cards.map((card) => (
+            <div key={card.id} className="p-2">
+              <div className="border rounded-lg shadow hover:shadow-lg p-4 bg-white">
+                <div className="h-40 bg-gray-200 rounded mb-2 flex items-center justify-center">
+                  {card.imgUrl ? (
+                    <img
+                      src={card.imgUrl}
+                      alt={card.itemName}
+                      className="h-full w-full object-cover rounded"
+                    />
+                  ) : (
+                    <span className="text-gray-500">No Image</span>
+                  )}
+                </div>
+                <h3 className="font-semibold">{card.itemName}</h3>
+                <p className="text-green-600 font-bold">Rs {card.price}</p>
+              </div>
+            </div>
+          ))}
+        </Slider>
+      ) : (
+        <p className="text-gray-500">No products found...</p>
+      )}
+    </div>
+  );
+}
+
+export default CardsSlider;

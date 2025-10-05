@@ -1,0 +1,18 @@
+@import "tailwindcss";
+
+/* slick slider css */
+@import "slick-carousel/slick/slick.css";
+@import "slick-carousel/slick/slick-theme.css";
+
+
+.slick-prev:before, 
+.slick-next:before {
+  color: black !important; /* arrow ka color */
+  font-size: 30px !important; /* size bara */
+}
+
+
+/* #box{
+    background-color: rgba(255, 255, 255, 0.5);
+} */
+
