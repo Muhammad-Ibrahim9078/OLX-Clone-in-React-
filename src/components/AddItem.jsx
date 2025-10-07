@@ -37,10 +37,8 @@ function AddItem() {
         category
       });
 
-      // Close loading Swal
       Swal.close();
 
-      // ✅ Success message
       Swal.fire({
         icon: "success",
         title: "Item Added!",
@@ -63,7 +61,6 @@ function AddItem() {
     } catch (error) {
       Swal.close();
 
-      // ❌ Error message
       Swal.fire({
         icon: "error",
         title: "Failed to Add!",
@@ -108,7 +105,6 @@ function AddItem() {
 
               <form onSubmit={dataAdd}>
                 <div className="modal-body">
-                  
                   <div className="mb-3">
                     <label className="col-form-label">Category:</label>
                     <select 
@@ -133,6 +129,7 @@ function AddItem() {
                     <input 
                       type="text" 
                       className="form-control" 
+                      placeholder="Enter Item Name"
                       value={itemName}
                       onChange={(e)=>setItemName(e.target.value)}
                       required
@@ -144,6 +141,7 @@ function AddItem() {
                     <input 
                       type="text" 
                       className="form-control" 
+                      placeholder="Enter Brand Name"
                       value={brandName}
                       onChange={(e)=>setBrandName(e.target.value)}
                       required
@@ -155,6 +153,7 @@ function AddItem() {
                     <input 
                       type="number" 
                       className="form-control" 
+                      placeholder="Enter Price in Rs"
                       value={price}
                       onChange={(e)=>setPrice(e.target.value)}
                       required
@@ -165,6 +164,7 @@ function AddItem() {
                     <label className="col-form-label">Description:</label>
                     <textarea 
                       className="form-control" 
+                      placeholder="Enter Description"
                       value={description}
                       onChange={(e)=>setDescription(e.target.value)}
                       required
@@ -176,7 +176,7 @@ function AddItem() {
                     <input 
                       type="text" 
                       className="form-control" 
-                      placeholder='0300-0000000'
+                      placeholder="0300-0000000"
                       value={contact}
                       onChange={(e)=>setContact(e.target.value)}
                       required
@@ -188,7 +188,7 @@ function AddItem() {
                     <input 
                       type="url" 
                       className="form-control" 
-                      placeholder='Enter Image URL'
+                      placeholder="Enter Image URL"
                       value={imgUrl}
                       onChange={(e)=>setImgUrl(e.target.value)}
                       required
@@ -205,7 +205,7 @@ function AddItem() {
                     Close
                   </button>
                   <button type="submit" className="btn btn-primary">
-                    Add Data
+                    Add Item
                   </button>
                 </div>
               </form>
