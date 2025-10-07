@@ -1,6 +1,7 @@
-import React, { useState } from 'react'
+import React, { useState } from 'react';
 import { collection, addDoc } from "firebase/firestore"; 
 import { db } from '../config/firebase';
+import Swal from 'sweetalert2';
 
 function AddItem() {
   // States for form fields
@@ -10,11 +11,21 @@ function AddItem() {
   const [description, setDescription] = useState("");
   const [contact, setContact] = useState("");
   const [imgUrl, setImgUrl] = useState("");
-  const [category, setCategory] = useState("");   // 👈 new state
+  const [category, setCategory] = useState("");
 
   // Firestore Add Function
-  async function dataAdd(e){
+  async function dataAdd(e) {
     e.preventDefault();
+
+    Swal.fire({
+      title: "Adding Item...",
+      html: "Please wait while we upload your product.",
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading();
+      },
+    });
+
     try {
       const docRef = await addDoc(collection(db, "products"), {
         itemName,
@@ -23,11 +34,24 @@ function AddItem() {
         description,
         contact,
         imgUrl,
-        category   // 👈 save category in Firestore
+        category
       });
+
+      // Close loading Swal
+      Swal.close();
+
+      // ✅ Success message
+      Swal.fire({
+        icon: "success",
+        title: "Item Added!",
+        text: "Your product has been uploaded successfully.",
+        timer: 2000,
+        showConfirmButton: false,
+      });
+
       console.log("Document written with ID: ", docRef.id);
 
-      // clear form after submit
+      // Clear form
       setItemName("");
       setBrandName("");
       setPrice("");
@@ -36,8 +60,17 @@ function AddItem() {
       setImgUrl("");
       setCategory("");
 
-    } catch (e) {
-      console.error("Error adding document: ", e);
+    } catch (error) {
+      Swal.close();
+
+      // ❌ Error message
+      Swal.fire({
+        icon: "error",
+        title: "Failed to Add!",
+        text: "Something went wrong. Please try again.",
+      });
+
+      console.error("Error adding document: ", error);
     }
   }
 
@@ -75,6 +108,25 @@ function AddItem() {
 
               <form onSubmit={dataAdd}>
                 <div className="modal-body">
+                  
+                  <div className="mb-3">
+                    <label className="col-form-label">Category:</label>
+                    <select 
+                      className="form-control"
+                      value={category}
+                      onChange={(e)=>setCategory(e.target.value)}
+                      required
+                    >
+                      <option value="">Select Category</option>
+                      <option value="property">Property</option>
+                      <option value="vehicle">Vehicle</option>
+                      <option value="electronics">Electronics</option>
+                      <option value="furniture">Furniture</option>
+                      <option value="mobile">Mobile</option>
+                      <option value="job">Job</option>
+                      <option value="other">Other</option>
+                    </select>
+                  </div>
 
                   <div className="mb-3">
                     <label className="col-form-label">Name:</label>
@@ -142,27 +194,6 @@ function AddItem() {
                       required
                     />
                   </div>
-
-                  {/* 👇 New Category Field */}
-                  <div className="mb-3">
-                    <label className="col-form-label">Category:</label>
-                    <select 
-                      className="form-control"
-                      value={category}
-                      onChange={(e)=>setCategory(e.target.value)}
-                      required
-                    >
-                      <option value="">Select Category</option>
-                      <option value="property">Property</option>
-                      <option value="vehicle">Vehicle</option>
-                      <option value="electronics">Electronics</option>
-                      <option value="furniture">Furniture</option>
-                      <option value="mobile">Mobile</option>
-                      <option value="job">Job</option>
-                      <option value="other">Other</option>
-                    </select>
-                  </div>
-
                 </div>
 
                 <div className="modal-footer">
@@ -184,7 +215,7 @@ function AddItem() {
         </div>
       </div>
     </>
-  )
+  );
 }
 
 export default AddItem;
